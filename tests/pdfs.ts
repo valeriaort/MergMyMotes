@@ -1,7 +1,7 @@
 import { PDFDocument, StandardFonts } from 'pdf-lib';
 
 // Small generated inputs exercise the real parser; no extraction or network mocks.
-export async function pdf(name: string, options: { pages?: number; blank?: boolean; imageOnly?: boolean } = {}) {
+export async function pdf(name: string, options: { pages?: number; blank?: boolean; imageOnly?: boolean; lines?: string[] } = {}) {
   const document = await PDFDocument.create();
   const regular = await document.embedFont(StandardFonts.Helvetica);
   const bold = await document.embedFont(StandardFonts.HelveticaBold);
@@ -12,8 +12,11 @@ export async function pdf(name: string, options: { pages?: number; blank?: boole
     if (pixel) page.drawImage(pixel, { x: 40, y: 400, width: 300, height: 200 });
     else if (!options.blank) {
       page.drawText('Cell biology', { x: 40, y: 640, size: 20, font: bold });
-      page.drawText('Cells are the basic units of life.', { x: 40, y: 605, size: 12, font: regular });
-      page.drawText('Remember the membrane.', { x: 40, y: 580, size: 12, font: italic });
+      if (options.lines) options.lines.forEach((line, index) => page.drawText(line, { x: 40, y: 605 - index * 25, size: 12, font: regular }));
+      else {
+        page.drawText('Cells are the basic units of life.', { x: 40, y: 605, size: 12, font: regular });
+        page.drawText('Remember the membrane.', { x: 40, y: 580, size: 12, font: italic });
+      }
     }
   }
   return { name, mimeType: 'application/pdf', buffer: Buffer.from(await document.save()) };

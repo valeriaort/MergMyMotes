@@ -43,3 +43,14 @@ button:disabled { opacity: .45; cursor: not-allowed; }
 .quotation blockquote { border-left: 2px solid #b8caaa; padding-left: .8rem; white-space: pre-wrap; }
 .notes .context { color: #647169; font-size: .75rem; margin-top: .5rem; }
 .source-title { font-size: .9rem; overflow-wrap: anywhere; }
+.proposal { padding: 1.3rem 0; border-bottom: 1px solid #dde3da; overflow-wrap: anywhere; }
+.proposal h3 { margin: .5rem 0; }
+.proposed-text { white-space: pre-wrap; margin: .7rem 0; padding: 1rem; background: #eef4e8; border-left: 3px solid #83a174; line-height: 1.7; }
+.actions { display: flex; flex-wrap: wrap; gap: .5rem; margin: .8rem 0; }
+.secondary { border: 1px solid #aabdb1; border-radius: .5rem; padding: .6rem .9rem; cursor: pointer; font-size: .85rem; background: white; }
+.secondary:hover:not(:disabled) { background: #eef4e8; }
+.decision { font-size: .8rem; font-weight: 600; }
+.evidence, .covered { margin-top: 1rem; font-size: .85rem; }
+.evidence summary, .covered summary { cursor: pointer; }
+.notes .insertion mark { background: #e8f0df; color: inherit; box-decoration-break: clone; }
+.export { margin-top: 2rem; border-top: 1px solid #dde3da; padding-top: 1rem; }

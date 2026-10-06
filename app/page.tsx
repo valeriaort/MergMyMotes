@@ -1,25 +1,11 @@
 'use client';
 
 import { useState } from 'react';
+import { Notes } from './notes';
+import { Review } from './review';
 import { validateFiles } from '../lib/input-validation';
-import type { ExtractedDocument, IngestionResult, Session, SourceType } from '../lib/session';
+import type { IngestionResult, Session, SourceType } from '../lib/session';
 
-function Notes({ document }: { document: ExtractedDocument }) {
-  return <div className="notes">
-    {document.blocks.map(block => {
-      const content = block.spans.map((span, index) => {
-        let text: React.ReactNode = span.text;
-        if (span.italic) text = <em>{text}</em>;
-        if (span.bold) text = <strong>{text}</strong>;
-        return <span key={index}>{text}</span>;
-      });
-      return block.kind === 'heading' ? <h3 key={block.id}>{content}</h3> : <p key={block.id}>{content}</p>;
-    })}
-    <details><summary>Original quotations and context</summary>
-      {document.blocks.map(block => <div key={block.id} className="quotation"><blockquote>{block.quotation}</blockquote><p className="context">{block.context}</p></div>)}
-    </details>
-  </div>;
-}
 
 export default function Home() {
   const [files, setFiles] = useState<File[]>([]);
@@ -64,15 +50,15 @@ export default function Home() {
             {baseId === String(index) && <span className="base-tag">Your base</span>}
           </div>)}</div>}
         </fieldset>
-        <button className="primary mt-6" disabled={busy || files.length === 0 || inputErrors.length > 0 || !baseId} onClick={inspect}>{busy ? 'Extracting notes…' : 'Inspect notes'}</button>
-        <div aria-live="polite">{busy && <p className="muted mt-3">Reading every PDF. This may take a moment.</p>}{visibleErrors.length > 0 && <div role="alert" aria-label="Document errors" className="errors"><p className="font-semibold">Please check your documents</p><ul>{visibleErrors.map((error, i) => <li key={i}>{error}</li>)}</ul></div>}</div>
+        <button className="primary mt-6" disabled={busy || files.length === 0 || inputErrors.length > 0 || !baseId} onClick={inspect}>{busy ? 'Working…' : 'Inspect notes'}</button>
+        <div aria-live="polite">{busy && <p className="muted mt-3">Working on your notes. This may take a moment.</p>}{visibleErrors.length > 0 && <div role="alert" aria-label="Document errors" className="errors"><p className="font-semibold">Please check your documents</p><ul>{visibleErrors.map((error, i) => <li key={i}>{error}</li>)}</ul></div>}</div>
       </section>
       <aside className="guide"><span className="eyebrow">A LITTLE CONTEXT</span><h2>A base to build on.</h2><p>Your base is your original set of notes. Comparison sources will contribute ideas for you to review.</p><div className="guide-rule" /><h3>Start with readable text</h3><p>Use short, single-column PDFs with selectable text. Scans, handwriting, and empty pages aren’t supported.</p><h3>Check what came through</h3><p>Headings and emphasis are best effort. Original typography and pagination aren’t reproduced.</p><h3>Sources are peers</h3><p>Notes and slides describe the source type; neither has automatic factual authority.</p></aside>
     </div>
     {session && base && <div className="mt-12 space-y-6"><p role="status" className="success">All {session.documents.length} PDFs extracted · {session.documents.reduce((n, doc) => n + doc.pageCount, 0)} pages. Check your notes below.</p>
       <section className="panel" aria-labelledby="base-title"><p className="eyebrow">YOUR STARTING POINT</p><h2 id="base-title">Your base document</h2><p className="muted mb-5">{base.name}</p><Notes document={base} /></section>
       <section aria-labelledby="sources-title"><h2 id="sources-title" className="mb-4">Comparison sources</h2><div className="grid gap-6 md:grid-cols-2">{session.documents.filter(doc => doc.id !== session.baseId).map(doc => <article className="panel" key={doc.id}><h3 className="source-title">{doc.name} · {doc.sourceType === 'slides' ? 'Slides' : 'Notes'}</h3><Notes document={doc} /></article>)}</div></section>
-      <p className="muted">Extraction is ready for inspection. Semantic comparison and review aren’t available yet. Changing any input starts a new session.</p>
+      <Review key={session.id} session={session} onBusy={setBusy} />
     </div>}
     <footer className="mt-10 border-t border-stone-200 pt-5 text-sm text-stone-600">In-memory workspace. Refresh clears your session. PDFs are processed by your local app and aren’t stored.</footer>
   </main>;
